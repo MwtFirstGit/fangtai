@@ -44,6 +44,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CerInfoEntityLib\CerInfoEntityLib.csproj">
+      <Project>{197A8CF7-27CF-4E68-A0A8-8F7BE4BB6234}</Project>
+      <Name>CerInfoEntityLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ICerSpiderTaskLib\ICerSpiderTaskLib.csproj">
       <Project>{E7A8A04D-7F85-481A-9029-154096660A2E}</Project>
       <Name>ICerSpiderTaskLib</Name>
