@@ -14,21 +14,21 @@ namespace ICerSpiderTaskLib
         /// <typeparam name="T"></typeparam>
         /// <param name="parms"></param>
         /// <returns></returns>
-        List<T> GetTask<T>(object []parms);
+        void GetTask(object []parms);
         /// <summary>
         /// 执行任务
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="parms"></param>
         /// <returns></returns>
-        List<T> RunTask<T>(object[] parms);
+        void RunTask(object[] parms);
         /// <summary>
         /// 上传数据
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="parms"></param>
         /// <returns></returns>
-        List<T> UploadData<T>(object[] parms);
+        void UploadData(object[] parms);
 
     }
 }
