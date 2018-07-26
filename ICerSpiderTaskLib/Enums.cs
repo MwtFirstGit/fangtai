@@ -9,5 +9,5 @@ namespace ICerSpiderTaskLib
     /// <summary>
     /// 证书类型
     /// </summary>
-    public enum CerType {VDE ,UL,TUV}
+    public enum CerType {DEMO,VDE ,UL,TUV}
 }

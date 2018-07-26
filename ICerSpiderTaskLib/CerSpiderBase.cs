@@ -3,22 +3,88 @@
  * 
  */
 
+using ExtractLib;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace ICerSpiderTaskLib
 {
     public abstract class CerSpiderBase : ICerSpiderTask
     {
+        #region 常量声明
+        protected const String Base_CerNum_SplitReg = "\\r\\s";
+        #endregion
+
+        #region 公用部分
         /// <summary>
-        /// 抽象类中默认实现
+        /// 证书类型 派生类实例化时必须对此成员赋值
+        /// </summary>
+        protected CerType CerTypeEnum { get; set; } = CerType.DEMO;
+
+        /// <summary>
+        /// 待执行的证书号队列
+        /// </summary>
+        protected ConcurrentQueue<String> CerQueue { get; set; } = new ConcurrentQueue<String>();
+
+        /// <summary>
+        /// 上传队列
+        /// </summary>
+        protected ConcurrentQueue<object> UpLoadQueue { get; set; } = new ConcurrentQueue<object>();
+
+        #endregion
+
+        #region 接口方法
+        /// <summary>
+        /// 抽象类中默认实现 传入证书号文本的绝对路径   读取证书号加入到队列中
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="parms"></param>
+        /// <param name="parms">证书号文件绝对路径</param>
         /// <returns></returns>
-        public virtual List<T> GetTask<T>(object[] parms)
+        public virtual void GetTask(object[] parms)
         {
-            throw new System.NotImplementedException();
+            String path = String.Empty;
+            #region 文件和路径参数校验
+            if (parms == null || parms?.Length == 0)
+            {
+                throw new Exception("传入路径参数错误");
+            }
+            else
+            {
+                path = parms[0] as String;
+                if (String.IsNullOrEmpty(path))
+                {
+                    throw new Exception("证书号路径为空");
+                }
+                else if (File.Exists(path))
+                {
+                    throw new Exception($"{path}不存在");
+                }
+            }
+            #endregion
+
+            try
+            {
+                using (StreamReader sr = new StreamReader(path))
+                {
+                    String cernums_str = sr.ReadToEnd();
+                    var nums = RegexMethod.RegSplit(Base_CerNum_SplitReg, cernums_str);
+                    nums?.ToList().ForEach(num => {
+                        if (!String.IsNullOrEmpty(num)) CerQueue.Enqueue(num);
+                    });
+                    Console.WriteLine("成功装载{0}条证书号", nums.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("读取证书号失败");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                throw;
+            }
         }
         /// <summary>
         /// 抽象方法 需要派生类实现
@@ -26,7 +92,7 @@ namespace ICerSpiderTaskLib
         /// <typeparam name="T"></typeparam>
         /// <param name="parms"></param>
         /// <returns></returns>
-        public abstract List<T> RunTask<T>(object[] parms);
+        public abstract void RunTask(object[] parms);
 
         /// <summary>
         /// 抽象类中默认实现
@@ -34,9 +100,40 @@ namespace ICerSpiderTaskLib
         /// <typeparam name="T"></typeparam>
         /// <param name="parms"></param>
         /// <returns></returns>
-        public virtual List<T> UploadData<T>(object[] parms)
+        public virtual void UploadData(object[] parms)
         {
-            throw new System.NotImplementedException();
+            String path = String.Empty;
+            #region 文件和路径参数校验
+            if (parms == null || parms?.Length == 0)
+            {
+                throw new Exception("传入路径参数错误");
+            }
+            else
+            {
+                path = parms[0] as String;
+                if (String.IsNullOrEmpty(path))
+                {
+                    throw new Exception("输出路径为空");
+                }
+                else if (File.Exists(path))
+                {
+                    throw new Exception($"{path}不存在");
+                }
+            }
+            #endregion
+
+
+            String str = String.Join("\r\n",from a in UpLoadQueue.ToList() select JsonConvert.SerializeObject(a));
+            //同一天的采集会覆盖
+            using (StreamWriter sw = new StreamWriter(str, true))
+            {
+                sw.Write(str);
+            }
         }
+        #endregion
+
+
+
+
     }
 }
