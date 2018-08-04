@@ -1,26 +1,19 @@
-﻿/*派生类Demo
- * 
- * >>>>>>>>>>>>>>>>>>>>>>>至少需要重写基类RunTask方法<<<<<<<<<<<<<<<<<<<<<<<<<<<
- * 
- */
-using ICerSpiderTaskLib;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
+﻿using ICerSpiderTaskLib;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
-using CerInfoEntityLib;
+using System.Threading.Tasks;
 
 namespace CerSpidersLib
 {
-  public class DemoSpider: CerSpiderBase
+  public  class VDESpider: CerSpiderBase
     {
         /// <summary>
         /// 构造函数
         /// </summary>
-        public DemoSpider() {
-            this.CerType =0;
-            base.OnInit(new InitEventArgs("示例爬虫"));
-        }
+        public VDESpider() { this.CerType = 0; }
 
 
         /// <summary>
@@ -48,7 +41,7 @@ namespace CerSpidersLib
 
             while (CerQueue.TryDequeue(out cernum))
             {
-                DemoEntity updata;
+                VDESpider updata;
                 /*这里写执行任务相关代码
                  *
                  */
