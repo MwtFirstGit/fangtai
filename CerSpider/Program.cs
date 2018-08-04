@@ -123,7 +123,13 @@ namespace CerSpider
         private static bool CheckUpdate()
         {
             String url = String.Format(UpdateAddress, Host);
-            String html = HttpMethod.FastPostMethod(upda);
+            String html = HttpMethod.FastGetMethod(url);
+            return CheckUpdateChar(html);
+        }
+
+        private static bool CheckUpdateChar(string html)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
