@@ -1,5 +1,4 @@
-﻿using CerInfoEntityLib;
-using ExtractLib;
+﻿using ExtractLib;
 using HttpToolsLib;
 using ICerSpiderTaskLib;
 using System;
