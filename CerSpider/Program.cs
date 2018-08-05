@@ -20,6 +20,7 @@ namespace CerSpider
     class Program
     {
         #region 常量
+        const String OutFolder = "OutPut";
         const String CerFolder = "CerNum";
         const String Host = "Host";
         const String UpdateAddress = "{0}/{1}";
@@ -47,7 +48,11 @@ namespace CerSpider
         static void Main(string[] args)
         {
             #region 测试
-            Console.WriteLine(AppDomain.CurrentDomain.BaseDirectory);
+            TaskEntity taskEntity = new TaskEntity();
+            taskEntity.runtype = 9;
+            taskEntity.taskid = "1";
+            taskEntity.tasktype = (int)TaskType.RunTask;
+            RunTask(taskEntity);
             Console.ReadLine();
             #endregion
 
@@ -103,9 +108,15 @@ namespace CerSpider
             var runtaskmethod = type_ins.GetMethod("RunTask");
             var uploadtaskmethod = type_ins.GetMethod("UploadData");
             object[] path = { EnumSelecter.GetTaskCerPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, CerFolder), runtasktype) };
-            gettaskmethod.Invoke(ins, path);
-            runtaskmethod.Invoke(ins, null);
-            uploadtaskmethod.Invoke(ins, null);
+            object[] path_save = { EnumSelecter.GetOutPutPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, OutFolder), runtasktype) };
+            object[] args = { path };
+            object[] args1 = { default(object[]) };
+            object[] args2 = { path_save };
+            Console.WriteLine($"任务id:{taskEntity.taskid}\t类型{Enum.GetName(typeof(CerType),taskEntity.runtype)}开始");
+            gettaskmethod.Invoke(ins, args);
+            runtaskmethod.Invoke(ins, args1);
+            uploadtaskmethod.Invoke(ins, args2);
+            Console.WriteLine($"任务id:{taskEntity.taskid}\t类型{Enum.GetName(typeof(CerType),taskEntity.runtype)}结束");
         }
 
         private static void InitFunc()

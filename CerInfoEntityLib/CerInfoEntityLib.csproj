@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ASTAEntity.cs" />
     <Compile Include="DemoEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VDEEntity.cs" />

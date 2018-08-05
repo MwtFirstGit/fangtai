@@ -9,7 +9,7 @@ namespace CerSpider
     /// <summary>
     /// 证书类型
     /// </summary>
-    public enum CerType {DEMO,VDE ,UL,TUV}
+    public enum CerType {DEMO, CCC, CQC, UL, ENEC, VDE, TUVLY, TUVND, BSI, ASTA, ERAC }
     /// <summary>
     /// 任务类型 
     /// </summary>

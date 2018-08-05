@@ -14,7 +14,8 @@ namespace CerSpider
   public class EnumSelecter
     {
         public static Dictionary<CerType, Func<object>> Ins_Dic { get; set; } = new Dictionary<CerType, Func<object>>() {
-            { CerType.VDE,()=>new VDESpider()}
+            { CerType.VDE,()=>new VDESpider()},
+            { CerType.ASTA,()=>new ASTASpider()}
         };
 
         /// <summary>

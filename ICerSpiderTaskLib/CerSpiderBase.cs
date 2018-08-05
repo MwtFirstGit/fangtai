@@ -16,6 +16,7 @@ namespace ICerSpiderTaskLib
     public abstract class CerSpiderBase : ICerSpiderTask
     {
         protected String CerType_Str = "基类任务";
+
         #region 常量声明
         protected const String Base_CerNum_SplitReg = "\\r\\s";
         #endregion
@@ -72,7 +73,7 @@ namespace ICerSpiderTaskLib
                 {
                     throw new Exception("证书号路径为空");
                 }
-                else if (File.Exists(path))
+                else if (!File.Exists(path))
                 {
                     throw new Exception($"{path}不存在");
                 }
@@ -128,16 +129,17 @@ namespace ICerSpiderTaskLib
                 {
                     throw new Exception("输出路径为空");
                 }
-                else if (File.Exists(path))
+                else if (!File.Exists(path))
                 {
                     throw new Exception($"{path}不存在");
                 }
             }
             #endregion
 
-            String str = String.Join("\r\n",from a in UpLoadQueue.ToList() select JsonConvert.SerializeObject(a));
+            String str = JsonConvert.SerializeObject(UpLoadQueue);
+            UpLoadQueue = new ConcurrentQueue<object>();
             //同一天的采集会覆盖
-            using (StreamWriter sw = new StreamWriter(str, true))
+            using (StreamWriter sw = new StreamWriter(path, true))
             {
                 sw.Write(str);
             }

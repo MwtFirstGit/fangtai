@@ -19,7 +19,6 @@ namespace CerSpidersLib
         /// </summary>
         public DemoSpider() {
             this.CerType =0;
-            base.OnInit(new InitEventArgs("示例爬虫"));
         }
 
 
