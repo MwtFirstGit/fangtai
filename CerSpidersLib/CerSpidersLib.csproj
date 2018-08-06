@@ -47,6 +47,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -56,8 +57,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ASTASpider.cs" />
+    <Compile Include="CQCSpider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="CCCSpider.cs" />
+    <Compile Include="TUVLYSpider.cs" />
     <Compile Include="VDESpider.cs" />
+    <Compile Include="WmCodeHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ICerSpiderTaskLib\ICerSpiderTaskLib.csproj">
