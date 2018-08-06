@@ -48,10 +48,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CerSpiderBase.cs" />
-    <Compile Include="Enums.cs" />
-    <Compile Include="EnumSelecter.cs" />
     <Compile Include="ICerSpiderTask.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpiderEventArgs.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
