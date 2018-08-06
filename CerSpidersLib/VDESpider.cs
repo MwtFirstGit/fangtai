@@ -1,23 +1,19 @@
-﻿/*派生类Demo
- * 
- * >>>>>>>>>>>>>>>>>>>>>>>至少需要重写基类RunTask方法<<<<<<<<<<<<<<<<<<<<<<<<<<<
- * 
- */
-using ICerSpiderTaskLib;
-using System.Collections.Generic;
-using System.Collections.Concurrent;
+﻿using ICerSpiderTaskLib;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading;
-using CerInfoEntityLib;
+using System.Threading.Tasks;
 
 namespace CerSpidersLib
 {
-  public class DemoSpider: CerSpiderBase
+  public  class VDESpider: CerSpiderBase
     {
         /// <summary>
         /// 构造函数
         /// </summary>
-        public DemoSpider() { this.CerTypeEnum = CerType.DEMO; }
+        public VDESpider() { this.CerType = 0; }
 
 
         /// <summary>
@@ -40,13 +36,12 @@ namespace CerSpidersLib
         public override void RunTask(object[] parms = null)
         {
             throw new Exception("调用了基类执行任务方法");
-
             #region 执行任务结构示例
             String cernum = String.Empty;
 
             while (CerQueue.TryDequeue(out cernum))
             {
-                DemoEntity updata;
+                VDESpider updata;
                 /*这里写执行任务相关代码
                  *
                  */

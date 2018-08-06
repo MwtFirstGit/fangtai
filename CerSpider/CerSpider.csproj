@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="HttpToolsLib">
+      <HintPath>..\Libs\HttpToolsLib.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -41,6 +44,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums.cs" />
+    <Compile Include="EnumSelecter.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServerMethod.cs" />
@@ -52,6 +57,14 @@
     <ProjectReference Include="..\CerSpidersLib\CerSpidersLib.csproj">
       <Project>{FCF1943E-778B-4628-B3E8-F9E5C0C5FF08}</Project>
       <Name>CerSpidersLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ICerSpiderTaskLib\ICerSpiderTaskLib.csproj">
+      <Project>{E7A8A04D-7F85-481A-9029-154096660A2E}</Project>
+      <Name>ICerSpiderTaskLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\PartEntityLib\PartEntityLib.csproj">
+      <Project>{9EB9DA74-2EDF-443D-8D28-43D9CCEEAC85}</Project>
+      <Name>PartEntityLib</Name>
     </ProjectReference>
     <ProjectReference Include="..\TaskEntityLib\TaskEntityLib.csproj">
       <Project>{DE0A518E-E519-44A3-BB8B-EA44B7DAE7FD}</Project>

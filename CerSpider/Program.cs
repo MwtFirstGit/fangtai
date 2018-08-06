@@ -6,25 +6,53 @@
  * 
  */
 
-using CerSpidersLib;
 using System;
-using System.Threading.Tasks;
 using System.Timers;
 using TaskEntityLib;
+using CerSpidersLib;
+using System.IO;
+using System.Collections.Generic;
+using PartEntityLib;
+using HttpToolsLib;
 
 namespace CerSpider
 {
     class Program
     {
+        #region 常量
+        const String OutFolder = "OutPut";
+        const String CerFolder = "CerNum";
+        const String Host = "Host";
+        const String UpdateAddress = "{0}/{1}";
+        #endregion
+
+        #region 全局变量
+
+        #endregion
+
+        static List<PartEntity> PartList = new List<PartEntity>();
+
+        /// <summary>
+        /// 是否需要更新
+        /// </summary>
+        static bool NeedUpdate = false;
         /// <summary>
         /// 接受命令定时器   更新 任务执行都通过定时器实现   接受到更新命令时会触发更新事件
         /// </summary>
         static Timer rev_timer = new Timer();
+        /// <summary>
+        /// 爬虫状态
+        /// </summary>
+        static Dictionary<String, SpiderStatue> SpiderDics { get; set; } = new Dictionary<string, SpiderStatue>();
 
         static void Main(string[] args)
         {
             #region 测试
-            Console.WriteLine(AppDomain.CurrentDomain.BaseDirectory);
+            TaskEntity taskEntity = new TaskEntity();
+            taskEntity.runtype = 9;
+            taskEntity.taskid = "1";
+            taskEntity.tasktype = (int)TaskType.RunTask;
+            RunTask(taskEntity);
             Console.ReadLine();
             #endregion
 
@@ -53,19 +81,78 @@ namespace CerSpider
         /// <param name="taskEntity"></param>
         private static void RunTask(TaskEntity taskEntity)
         {
-            throw new NotImplementedException();
+            var tasktype = (TaskType)taskEntity.tasktype;
+            switch (tasktype)
+            {
+                case TaskType.None:
+                    break;
+                case TaskType.Update:
+                    break;
+                case TaskType.RunTask:
+                    SpiderDics.Add(taskEntity.taskid, SpiderStatue.Wait);
+                    RunSpider(taskEntity);
+                    SpiderDics[taskEntity.taskid] = SpiderStatue.Finish;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private static void RunSpider(TaskEntity taskEntity)
+        {
+            SpiderDics[taskEntity.taskid] =  SpiderStatue.Start;
+            var runtasktype = (CerType)taskEntity.runtype;
+            object ins = EnumSelecter.Ins_Dic[runtasktype].Invoke();
+            var type_ins = ins?.GetType();
+            var gettaskmethod = type_ins.GetMethod("GetTask");
+            var runtaskmethod = type_ins.GetMethod("RunTask");
+            var uploadtaskmethod = type_ins.GetMethod("UploadData");
+            object[] path = { EnumSelecter.GetTaskCerPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, CerFolder), runtasktype) };
+            object[] path_save = { EnumSelecter.GetOutPutPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, OutFolder), runtasktype) };
+            object[] args = { path };
+            object[] args1 = { default(object[]) };
+            object[] args2 = { path_save };
+            Console.WriteLine($"任务id:{taskEntity.taskid}\t类型{Enum.GetName(typeof(CerType),taskEntity.runtype)}开始");
+            gettaskmethod.Invoke(ins, args);
+            runtaskmethod.Invoke(ins, args1);
+            uploadtaskmethod.Invoke(ins, args2);
+            Console.WriteLine($"任务id:{taskEntity.taskid}\t类型{Enum.GetName(typeof(CerType),taskEntity.runtype)}结束");
         }
 
         private static void InitFunc()
         {
             //组件版本读取
-
-            //服务端网络联通校验
-
+            InItPart();
+            //服务端网络联通校验 同时进行更新校验
+            NeedUpdate = CheckUpdate();
             //任务证书号目录校验
 
             //输出目录校验
             throw new NotImplementedException();
+        }
+
+        private static bool CheckUpdate()
+        {
+            String url = String.Format(UpdateAddress, Host);
+            String html = HttpMethod.FastGetMethod(url);
+            return CheckUpdateChar(html);
+        }
+
+        private static bool CheckUpdateChar(string html)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// 组件版本读取
+        /// </summary>
+        private static void InItPart()
+        {
+          var files=  Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory);
+           foreach(String path in files)
+            {
+                PartList.Add(new PartEntity(path));
+            }
         }
     }
 }
