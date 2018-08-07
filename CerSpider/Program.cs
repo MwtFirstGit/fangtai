@@ -14,6 +14,7 @@ using System.IO;
 using System.Collections.Generic;
 using PartEntityLib;
 using HttpToolsLib;
+using System.Threading;
 
 namespace CerSpider
 {
@@ -114,7 +115,21 @@ namespace CerSpider
             object[] args2 = { path_save };
             Console.WriteLine($"任务id:{taskEntity.taskid}\t类型{Enum.GetName(typeof(CerType),taskEntity.runtype)}开始");
             gettaskmethod.Invoke(ins, args);
-            runtaskmethod.Invoke(ins, args1);
+            Thread[] tds = new Thread[taskEntity.threadnum];
+            for(int i = 0;i<taskEntity.threadnum;i++)
+            {
+                tds[i] = new Thread(new ThreadStart(delegate { runtaskmethod.Invoke(ins, args1); }));
+                tds[i].IsBackground = true;
+                tds[i].Start();
+            }
+            foreach(var td in tds)
+            {
+                while(td.IsAlive)
+                {
+                    Thread.Sleep(1000);
+                }
+                td.Abort();
+            }
             uploadtaskmethod.Invoke(ins, args2);
             Console.WriteLine($"任务id:{taskEntity.taskid}\t类型{Enum.GetName(typeof(CerType),taskEntity.runtype)}结束");
         }

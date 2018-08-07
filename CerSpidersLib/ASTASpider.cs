@@ -19,7 +19,7 @@ namespace CerSpidersLib
         /// </summary>
         public ASTASpider()
         {
-            this.CerType = 0;
+            this.CerType = 9;
         }
 
 

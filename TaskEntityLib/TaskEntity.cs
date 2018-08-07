@@ -11,5 +11,7 @@ namespace TaskEntityLib
         public int tasktype { get; set; }
         public int runtype { get; set; }
         public string taskid { get; set; }
+
+        public int threadnum { get; set; } = 1;
     }
 }
