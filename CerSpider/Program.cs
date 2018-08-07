@@ -40,7 +40,7 @@ namespace CerSpider
         /// <summary>
         /// 接受命令定时器   更新 任务执行都通过定时器实现   接受到更新命令时会触发更新事件
         /// </summary>
-        static Timer rev_timer = new Timer();
+        static System.Timers.Timer rev_timer = new System.Timers.Timer();
         /// <summary>
         /// 爬虫状态
         /// </summary>
