@@ -6,24 +6,16 @@ using System.Threading.Tasks;
 
 namespace TaskEntityLib
 {
-    public class TaskEntity
+    public class TaskEntity: BaseTask
     {
         /// <summary>
         /// 任务类型
         /// </summary>
         public int tasktype { get; set; }
         /// <summary>
-        /// 证书类型
-        /// </summary>
-        public int certype { get; set; }
-        /// <summary>
         /// 任务id
         /// </summary>
         public string taskid { get; set; } 
-        /// <summary>
-        /// 线程数
-        /// </summary>
-        public int threadnum { get; set; } = 1;
         /// <summary>
         /// 创建时间
         /// </summary>
