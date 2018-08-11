@@ -50,9 +50,8 @@ namespace CerSpider
         {
             #region 测试
             TaskEntity taskEntity = new TaskEntity();
-            taskEntity.runtype = 9;
+            taskEntity.certype = 9;
             taskEntity.taskid = "1";
-            taskEntity.tasktype = (int)TaskType.RunTask;
             RunTask(taskEntity);
             Console.ReadLine();
             #endregion
@@ -83,26 +82,15 @@ namespace CerSpider
         private static void RunTask(TaskEntity taskEntity)
         {
             var tasktype = (TaskType)taskEntity.tasktype;
-            switch (tasktype)
-            {
-                case TaskType.None:
-                    break;
-                case TaskType.Update:
-                    break;
-                case TaskType.RunTask:
-                    SpiderDics.Add(taskEntity.taskid, SpiderStatue.Wait);
-                    RunSpider(taskEntity);
-                    SpiderDics[taskEntity.taskid] = SpiderStatue.Finish;
-                    break;
-                default:
-                    break;
-            }
+            SpiderDics.Add(taskEntity.taskid, SpiderStatue.Wait);
+            RunSpider(taskEntity);
+            SpiderDics[taskEntity.taskid] = SpiderStatue.Finish;
         }
 
         private static void RunSpider(TaskEntity taskEntity)
         {
-            SpiderDics[taskEntity.taskid] =  SpiderStatue.Start;
-            var runtasktype = (CerType)taskEntity.runtype;
+            SpiderDics[taskEntity.taskid] = SpiderStatue.Start;
+            var runtasktype = (CerType)taskEntity.certype;
             object ins = EnumSelecter.Ins_Dic[runtasktype].Invoke();
             var type_ins = ins?.GetType();
             var gettaskmethod = type_ins.GetMethod("GetTask");
@@ -113,7 +101,7 @@ namespace CerSpider
             object[] args = { path };
             object[] args1 = { default(object[]) };
             object[] args2 = { path_save };
-            Console.WriteLine($"任务id:{taskEntity.taskid}\t类型{Enum.GetName(typeof(CerType),taskEntity.runtype)}开始");
+            Console.WriteLine($"任务id:{taskEntity.taskid}\t类型{Enum.GetName(typeof(CerType),taskEntity.certype)}开始");
             gettaskmethod.Invoke(ins, args);
             Thread[] tds = new Thread[taskEntity.threadnum];
             for(int i = 0;i<taskEntity.threadnum;i++)
@@ -131,7 +119,7 @@ namespace CerSpider
                 td.Abort();
             }
             uploadtaskmethod.Invoke(ins, args2);
-            Console.WriteLine($"任务id:{taskEntity.taskid}\t类型{Enum.GetName(typeof(CerType),taskEntity.runtype)}结束");
+            Console.WriteLine($"任务id:{taskEntity.taskid}\t类型{Enum.GetName(typeof(CerType),taskEntity.certype)}结束");
         }
 
         private static void InitFunc()

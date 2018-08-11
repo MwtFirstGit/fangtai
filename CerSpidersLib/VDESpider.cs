@@ -13,7 +13,7 @@ namespace CerSpidersLib
         /// <summary>
         /// 构造函数
         /// </summary>
-        public VDESpider() { this.CerType = 5; }
+        public VDESpider() { this.CerType = 4; }
 
 
         /// <summary>

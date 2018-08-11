@@ -8,10 +8,33 @@ namespace TaskEntityLib
 {
     public class TaskEntity
     {
+        /// <summary>
+        /// 任务类型
+        /// </summary>
         public int tasktype { get; set; }
-        public int runtype { get; set; }
-        public string taskid { get; set; }
-
+        /// <summary>
+        /// 证书类型
+        /// </summary>
+        public int certype { get; set; }
+        /// <summary>
+        /// 任务id
+        /// </summary>
+        public string taskid { get; set; } 
+        /// <summary>
+        /// 线程数
+        /// </summary>
         public int threadnum { get; set; } = 1;
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public string createtime { get; set; }
+        /// <summary>
+        /// 开始时间
+        /// </summary>
+        public string runtime { get; set; }
+        /// <summary>
+        /// 创建时间
+        /// </summary>
+        public string finishtime { get; set; }
     }
 }
