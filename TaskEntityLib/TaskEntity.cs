@@ -20,13 +20,6 @@ namespace TaskEntityLib
         /// 创建时间
         /// </summary>
         public string createtime { get; set; }
-        /// <summary>
-        /// 开始时间
-        /// </summary>
-        public string runtime { get; set; }
-        /// <summary>
-        /// 创建时间
-        /// </summary>
-        public string finishtime { get; set; }
+   
     }
 }
