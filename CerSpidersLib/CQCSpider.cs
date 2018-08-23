@@ -38,7 +38,7 @@ namespace CerSpidersLib
         /// <summary>
         /// 构造函数
         /// </summary>
-        public CQCSpider() { this.CerType = 2; }
+        public CQCSpider() { this.CerType = 1; }
 
         /// <summary>
         /// 使用基类方法
