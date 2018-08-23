@@ -76,7 +76,10 @@ namespace CerSpidersLib
                 {
                     var name = XpathMethod.GetSingleResult("tr/td[1]", tr);
                     var value = XpathMethod.GetSingleResult("tr/td[2]", tr);
-                    dirs.Add(Fitlter(name, ":"), Fitlter(value));
+                    if (!name.Contains("ASTA BEAB Ref") && !name.Contains("Characteristics") && !name.Contains("Licenced Mark") && !name.Contains("Additional Info"))
+                    {
+                        dirs.Add(Fitlter(name, ":"), Fitlter(value));
+                    }
                 }
             }
 
