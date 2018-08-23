@@ -34,7 +34,7 @@ namespace CerSpidersLib
         /// <summary>
         /// 构造函数
         /// </summary>
-        public TUVLYSpider() { this.CerType = 6; }
+        public TUVLYSpider() { this.CerType = 5; }
 
         /// <summary>
         /// 使用基类方法
