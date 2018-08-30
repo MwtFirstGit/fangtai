@@ -10,31 +10,39 @@ using System.Threading.Tasks;
 
 namespace CerSpidersLib
 {
-    public class TUVLYSpider : CerSpiderBase
+    public class TUVndSpider : CerSpiderBase
     {
+
         #region 公共变量声明
         /// <summary>
-        /// TUVLY请求Url
+        /// 访问Url
         /// </summary>
-        const String TUVLY_Details_Url = "https://www.certipedia.com/certificates/{0}?locale=en";
+        const String Url = "https://certificateexplorer2.tuev-sued.de/web/ig-tuvs/certificate?lang=en&q={0}";
+
+        #region 正则表达式匹配结果
         /// <summary>
-        /// xpath获取数据所在节点
+        /// 正则匹配标题与内容所在字段
         /// </summary>
-        const String xpath_certi = "//*[@class=\"certificate\"]/table/tbody/tr";
+        const String reg_all = "<tr>([\\s\\S]+?)</tr>";
         /// <summary>
-        /// xpath获取标题
+        /// 正则匹配标题
         /// </summary>
-        const String xpath_title = "tr/td[1]";
+        const String reg_title = "<span>(.*?)</span>";
         /// <summary>
-        /// xpath获取详情
+        /// 正则匹配内容
         /// </summary>
-        const String xpath_details = "tr/td[2]";
+        const String reg_details = "<td>([\\s\\S]+?)</td>";
+        #endregion
+
         #endregion
 
         /// <summary>
         /// 构造函数
         /// </summary>
-        public TUVLYSpider() { this.CerType = 5; }
+        public TUVndSpider()
+        {
+            this.CerType = 6;
+        }
 
         /// <summary>
         /// 使用基类方法
@@ -46,6 +54,12 @@ namespace CerSpidersLib
         {
             base.GetTask(parms);
         }
+        /// <summary>
+        /// 重写基类方法
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parms">预留  可空</param>
+        /// <returns></returns>
         public override void RunTask(object[] parms = null)
         {
             String cernum = String.Empty;
@@ -55,10 +69,9 @@ namespace CerSpidersLib
                 /*这里写执行任务相关代码
                  *
                  */
-                Console.WriteLine($"TUVLY证书号{cernum}开始");
-                //String html = CCC_Details(cernum);
-                Dictionary<String, String> updata = TUVLY_Details(cernum);
-                Console.WriteLine($"TUVLY证书号{cernum}完毕");
+                Console.WriteLine($"TUVnd证书号{cernum}开始");
+                Dictionary<String, String> updata = TUVnd_Details(cernum);
+                Console.WriteLine($"TUVnd证书号{cernum}完毕");
 
                 //上传数据入队
                 UpLoadQueue.Enqueue(updata);
@@ -66,34 +79,41 @@ namespace CerSpidersLib
                 Thread.Sleep(1);
             }
         }
+
         /// <summary>
-        /// 获取证书编号对应详情
+        /// 请求获取详细信息
         /// </summary>
         /// <param name="Certi_No"></param>
-        private Dictionary<String, String> TUVLY_Details(String Certi_No)
+        public static Dictionary<string, string> TUVnd_Details(String Certi_No)
         {
-            Dictionary<String, String> dirs = new Dictionary<string, string>();
+            Dictionary<string, string> dirs = new Dictionary<string, string>();
             String html = "start";
-            String newcertino = Certi_No.Substring(1, Certi_No.Length - 1);
             try
             {
                 HttpInfo info = new HttpInfo();
-                info.RequestUrl = String.Format(TUVLY_Details_Url, newcertino);
-                while (!html.Contains(newcertino) || !html.Contains("Certificate No"))
+                info.RequestUrl = String.Format(Url, Certi_No);
+                while (!html.Contains(Certi_No))
                 {
-                    //info.Ip = 
                     html = HttpMethod.HttpWork(info);
                     Thread.Sleep(1);
                 }
-                if (html.Contains(newcertino))
+                //处理数据
+                var list = RegexMethod.GetMutResult(reg_all, html, 1);
+                int i = 0;
+                foreach (var item in list)
                 {
-                    //处理数据
-                    var strs = XpathMethod.GetMutResult(xpath_certi, html, 0);
-                    foreach (var str in strs)
+                    if (item.Contains("cert_details_th"))
                     {
-                        if (XpathMethod.GetSingleResult(xpath_title, str, 1).Replace(": ", "") != "Certificate Holder")
+                        String title = RegexMethod.GetSingleResult(reg_title, item, 1);
+                        String details = RegexMethod.GetSingleResult(reg_details, item, 1);
+                        if (title != "&#160;" && details != "&#160;")
                         {
-                            dirs.Add(XpathMethod.GetSingleResult(xpath_title, str, 1).Replace(": ", ""), XpathMethod.GetSingleResult(xpath_details, str, 1).Replace("\n", ""));
+                            if (String.IsNullOrEmpty(title))
+                            {
+                                i++;
+                                title = "Custom" + i;
+                            }
+                            dirs.Add(title, details);
                         }
                     }
                 }
@@ -103,8 +123,8 @@ namespace CerSpidersLib
 
             }
             return dirs;
-
         }
+
         /// <summary>
         /// 使用基类方法 服务端接口未完成前先输出到本地
         /// </summary>

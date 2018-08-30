@@ -57,10 +57,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ASTASpider.cs" />
+    <Compile Include="BSISpider.cs" />
     <Compile Include="CQCSpider.cs" />
+    <Compile Include="ENECSpider.cs" />
+    <Compile Include="ERACSpider.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CCCSpider.cs" />
     <Compile Include="TUVLYSpider.cs" />
+    <Compile Include="TUVndSpider.cs" />
+    <Compile Include="ULSpider.cs" />
     <Compile Include="VDESpider.cs" />
     <Compile Include="WmCodeHelper.cs" />
   </ItemGroup>
