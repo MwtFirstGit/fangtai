@@ -8,12 +8,17 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TaskEntityLib;
 
 namespace CerSpidersLib
 {
     public class ERACSpider : CerSpiderBase
     {
         #region 公共变量声明
+        /// <summary>
+        /// 任务队列
+        /// </summary>
+        static ConcurrentQueue<string> taskqueue = new ConcurrentQueue<string>();
         /// <summary>
         /// 详情页postdata队列
         /// </summary>
@@ -90,10 +95,15 @@ namespace CerSpidersLib
         /// <typeparam name="T"></typeparam>
         /// <param name="parms"></param>
         /// <returns></returns>
-        public override void GetTask(object[] parms)
+        //public override void GetTask(object[] parms)
+        //{
+        //    base.GetTask(parms);
+        //}
+        public void GetTask(TaskEntity taskEntity)
         {
-            base.GetTask(parms);
+            base.GetTask(taskqueue, taskEntity);
         }
+        
         /// <summary>
         /// 重写基类方法
         /// </summary>
@@ -104,7 +114,7 @@ namespace CerSpidersLib
         {
             String cernum = String.Empty;
 
-            while (CerQueue.TryDequeue(out cernum))
+            while (taskqueue.TryDequeue(out cernum))
             {
                 /*这里写执行任务相关代码
                  *
