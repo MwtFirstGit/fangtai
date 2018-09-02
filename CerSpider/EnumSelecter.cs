@@ -15,7 +15,9 @@ namespace CerSpider
     {
         public static Dictionary<CerType, Func<object>> Ins_Dic { get; set; } = new Dictionary<CerType, Func<object>>() {
             { CerType.VDE,()=>new VDESpider()},
-            { CerType.ASTA,()=>new ASTASpider()}
+            { CerType.ASTA,()=>new ASTASpider()},
+            { CerType.ERAC,()=>new ERACSpider()},
+            { CerType.CCC,()=>new CCCSpider()}
         };
 
         /// <summary>

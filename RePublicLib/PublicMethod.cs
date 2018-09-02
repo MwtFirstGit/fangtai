@@ -15,31 +15,50 @@ namespace RePublicLib
     public class PublicMethod
     {
 
-        const String Host = "http://118.242.208.90:8012{0}";
+        const String Host = "http://118.24.208.90:8012{0}";
         /// <summary>
         /// 上传数据
         /// </summary>
         /// <param name="parm"></param>
         /// <returns></returns>
-        public static object UpLoadFunc(object[] parm)
+        public static bool UpLoadFunc(string str,int certype)
         {
-            String url = "";
-            var datas = (List<object>)parm[0];
-
+            bool flag = false;
+            String url = String.Format(Host, $"/FangTaiData/InsertCerData?CerType={certype}&DataSrc=1");
             HttpInfo info = new HttpInfo(url);
-            //info.PostData = HttpMethod.URLEncode(postdata);
+            info.PostData = HttpMethod.URLEncode(str);
             String retstr = "start";
             while (!retstr.ToUpper().Contains("OK") || retstr.Trim().LastIndexOf("}") != retstr.Length - 1)
             {
                 retstr = HttpMethod.HttpWork(info);
                 Thread.Sleep(1);
+                flag = true;
             }
             Console.WriteLine($"{retstr}\r{DateTime.Now}");
             info = null;
             retstr = null;
             //postdata = null;
-            return parm[1];
+            return flag;
         }
+
+        //public static void GetTask(ConcurrentQueue<String> runtaskqueue, TaskEntity taskEntity)
+        //{
+        //    new Task(() =>
+        //    {
+        //        Console.WriteLine("开启获取任务");
+        //        while (true)
+        //        {
+        //            if (runtaskqueue.Count == 0)
+        //            {
+        //                taskEntity = PublicMethod.GetTaskPublic(ref runtaskqueue);
+        //                if (!String.IsNullOrEmpty(taskEntity.taskid))
+        //                {
+        //                    Console.WriteLine($"成功获取到taskid为{taskEntity.taskid}的任务");
+        //                }
+        //            }
+        //        }
+        //    });
+        //}
         /// <summary>
         /// 获取任务
         /// </summary>

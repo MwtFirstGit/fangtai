@@ -60,68 +60,49 @@ namespace ICerSpiderTaskLib
         /// <typeparam name="T"></typeparam>
         /// <param name="parms">证书号文件绝对路径</param>
         /// <returns></returns>
-        //public virtual void GetTask(object[] parms)
-        //{
-        //    String path = String.Empty;
-
-        //    #region 文件和路径参数校验
-        //    if (parms == null || parms?.Length == 0)
-        //    {
-        //        throw new Exception("传入路径参数错误");
-        //    }
-        //    else
-        //    {
-        //        path = parms[0] as String;
-        //        if (String.IsNullOrEmpty(path))
-        //        {
-        //            throw new Exception("证书号路径为空");
-        //        }
-        //        else if (!File.Exists(path))
-        //        {
-        //            throw new Exception($"{path}不存在");
-        //        }
-        //    }
-        //    #endregion
-
-        //    try
-        //    {
-        //        using (StreamReader sr = new StreamReader(path))
-        //        {
-        //            String cernums_str = sr.ReadToEnd();
-        //            var nums = RegexMethod.RegSplit(Base_CerNum_SplitReg, cernums_str);
-        //            nums?.ToList().ForEach(num =>
-        //            {
-        //                if (!String.IsNullOrEmpty(num)) CerQueue.Enqueue(num);
-        //            });
-        //            Console.WriteLine("成功装载{0}条证书号", nums.Length);
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine("读取证书号失败");
-        //        Console.WriteLine(ex.Message);
-        //        Console.WriteLine(ex.StackTrace);
-        //        throw;
-        //    }
-        //}
-
-        public virtual void GetTask(ConcurrentQueue<String> runtaskqueue,TaskEntity taskEntity)
+        public virtual void GetTask(object[] parms)
         {
-            new Task(() => 
+            String path = String.Empty;
+
+            #region 文件和路径参数校验
+            if (parms == null || parms?.Length == 0)
             {
-                Console.WriteLine("开启获取任务");
-                while (true)
+                throw new Exception("传入路径参数错误");
+            }
+            else
+            {
+                path = parms[0] as String;
+                if (String.IsNullOrEmpty(path))
                 {
-                    if(runtaskqueue.Count == 0)
-                    {
-                        taskEntity = PublicMethod.GetTaskPublic(ref runtaskqueue);
-                        if (!String.IsNullOrEmpty(taskEntity.taskid))
-                        {
-                            Console.WriteLine($"成功获取到taskid为{taskEntity.taskid}的任务");
-                        }
-                    }
+                    throw new Exception("证书号路径为空");
                 }
-            });
+                else if (!File.Exists(path))
+                {
+                    throw new Exception($"{path}不存在");
+                }
+            }
+            #endregion
+
+            try
+            {
+                using (StreamReader sr = new StreamReader(path))
+                {
+                    String cernums_str = sr.ReadToEnd();
+                    var nums = RegexMethod.RegSplit(Base_CerNum_SplitReg, cernums_str);
+                    nums?.ToList().ForEach(num =>
+                    {
+                        if (!String.IsNullOrEmpty(num)) CerQueue.Enqueue(num);
+                    });
+                    Console.WriteLine("成功装载{0}条证书号", nums.Length);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("读取证书号失败");
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
+                throw;
+            }
         }
         /// <summary>
         /// 抽象方法 需要派生类实现
@@ -139,33 +120,38 @@ namespace ICerSpiderTaskLib
         /// <returns></returns>
         public virtual void UploadData(object[] parms)
         {
-            String path = String.Empty;
-            #region 文件和路径参数校验
-            if (parms == null || parms?.Length == 0)
-            {
-                throw new Exception("传入路径参数错误");
-            }
-            else
-            {
-                path = parms[0] as String;
-                if (String.IsNullOrEmpty(path))
-                {
-                    throw new Exception("输出路径为空");
-                }
-                else if (!File.Exists(path))
-                {
-                    throw new Exception($"{path}不存在");
-                }
-            }
-            #endregion
+            //bool flag = false;
+            //String path = String.Empty;
+            //#region 文件和路径参数校验
+            //if (parms == null || parms?.Length == 0)
+            //{
+            //    throw new Exception("传入路径参数错误");
+            //}
+            //else
+            //{
+            //    path = parms[0] as String;
+            //    if (String.IsNullOrEmpty(path))
+            //    {
+            //        throw new Exception("输出路径为空");
+            //    }
+            //    else if (!File.Exists(path))
+            //    {
+            //        throw new Exception($"{path}不存在");
+            //    }
+            //}
+            //#endregion
 
             String str = JsonConvert.SerializeObject(UpLoadQueue);
             UpLoadQueue = new ConcurrentQueue<object>();
             //同一天的采集会覆盖
-            using (StreamWriter sw = new StreamWriter(path, true))
+            if(PublicMethod.UpLoadFunc(str, CerType))
             {
-                sw.Write(str);
+                Console.WriteLine("上传完毕");
             }
+            //using (StreamWriter sw = new StreamWriter(path, true))
+            //{
+            //    sw.Write(str);
+            //}
         }
         #endregion
 

@@ -2,6 +2,7 @@
 using HttpToolsLib;
 using ICerSpiderTaskLib;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -13,6 +14,10 @@ namespace CerSpidersLib
     public class CCCSpider : CerSpiderBase
     {
         #region 公共变量声明
+        /// <summary>
+        /// 任务队列
+        /// </summary>
+        static ConcurrentQueue<string> taskqueue = new ConcurrentQueue<string>();
         /// <summary>
         /// CCC证件Url
         /// </summary>
@@ -53,14 +58,18 @@ namespace CerSpidersLib
         public override void RunTask(object[] parms = null)
         {
             String cernum = String.Empty;
-
-            while (CerQueue.TryDequeue(out cernum))
+            taskqueue = (ConcurrentQueue<string>)parms[0];
+            while (taskqueue.TryDequeue(out cernum))
             {
                 /*这里写执行任务相关代码
                  *
                  */
                 Console.WriteLine($"CCC证书号{cernum}开始");
                 //String html = CCC_Details(cernum);
+                if (WmCodeHelper.LoadWmFromFile("fangtai1.dat", "123456"))
+                {
+                    WmCodeHelper.SetWmOption(6, 90);
+                }
                 Dictionary<String, String> updata = CCC_Details(cernum);
                 Console.WriteLine($"CCC证书号{cernum}完毕");
 

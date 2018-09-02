@@ -101,7 +101,7 @@ namespace CerSpidersLib
         //}
         public void GetTask(TaskEntity taskEntity)
         {
-            base.GetTask(taskqueue, taskEntity);
+            //base.GetTask(taskqueue, taskEntity);
         }
         
         /// <summary>
@@ -113,7 +113,7 @@ namespace CerSpidersLib
         public override void RunTask(object[] parms = null)
         {
             String cernum = String.Empty;
-
+            taskqueue = (ConcurrentQueue<string>)parms[0];
             while (taskqueue.TryDequeue(out cernum))
             {
                 /*这里写执行任务相关代码
@@ -121,12 +121,12 @@ namespace CerSpidersLib
                  */
                 Console.WriteLine($"ERAC证书号{cernum}开始");
                 //String html = CCC_Details(cernum);
-                string postdata = GetPostData("ESV110434");
-                GetDetailsPostData("ESV110434", postdata, ref postdataqueue);
+                string postdata = GetPostData(cernum);
+                GetDetailsPostData(cernum, postdata, ref postdataqueue);
                 string detailspostdata = string.Empty;
                 while (postdataqueue.TryDequeue(out detailspostdata))
                 {
-                    Dictionary<String, String> updata = ERAC_Details(detailspostdata, "ESV110434");
+                    Dictionary<String, String> updata = ERAC_Details(detailspostdata, cernum);
                     //上传数据入队
                     UpLoadQueue.Enqueue(updata);
                     Thread.Sleep(1);

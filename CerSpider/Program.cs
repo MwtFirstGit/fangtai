@@ -9,12 +9,13 @@
 using System;
 using System.Timers;
 using TaskEntityLib;
-using CerSpidersLib;
 using System.IO;
 using System.Collections.Generic;
 using PartEntityLib;
 using HttpToolsLib;
 using System.Threading;
+using RePublicLib;
+using System.Collections.Concurrent;
 
 namespace CerSpider
 {
@@ -49,64 +50,68 @@ namespace CerSpider
         static void Main(string[] args)
         {
             #region 测试
-            TaskEntity taskEntity = new TaskEntity();
-            taskEntity.certype = 9;
-            taskEntity.taskid = "1";
-            RunTask(taskEntity);
-            Console.ReadLine();
+            //TaskEntity taskEntity = new TaskEntity();
+            //taskEntity.certype = 9;
+            //taskEntity.taskid = "1";
+            //RunTask(taskEntity);
+            //Console.ReadLine();
             #endregion
 
             #region 初始化
-            InitFunc();
+            //InitFunc();
             #endregion
 
-            rev_timer.AutoReset = true;
+            rev_timer.AutoReset = false;
             rev_timer.Enabled = true;
-            rev_timer.Interval = 5000;
+            rev_timer.Interval = 1000;
             rev_timer.Elapsed += new ElapsedEventHandler(TimerFunc);
             rev_timer.Start();
+            Console.ReadLine();
         }
 
         private static void TimerFunc(object sender, ElapsedEventArgs e)
         {
             TaskEntity taskEntity = null;
-            if(ServerMethod.GetTask(out taskEntity))
+            ConcurrentQueue<string> taskqueue = new ConcurrentQueue<string>();
+            taskEntity = PublicMethod.GetTaskPublic(ref taskqueue);
+            if (!String.IsNullOrEmpty(taskEntity.taskid))
             {
-                RunTask(taskEntity);
+                RunTask(taskEntity,taskqueue);
             }
         }
         /// <summary>
         /// 执行任务入口
         /// </summary>
         /// <param name="taskEntity"></param>
-        private static void RunTask(TaskEntity taskEntity)
+        private static void RunTask(TaskEntity taskEntity,ConcurrentQueue<string> taskqueue)
         {
             var tasktype = (TaskType)taskEntity.tasktype;
             SpiderDics.Add(taskEntity.taskid, SpiderStatue.Wait);
-            RunSpider(taskEntity);
+            RunSpider(taskEntity,taskqueue);
             SpiderDics[taskEntity.taskid] = SpiderStatue.Finish;
         }
 
-        private static void RunSpider(TaskEntity taskEntity)
+        private static void RunSpider(TaskEntity taskEntity,ConcurrentQueue<String> taskqueue)
         {
             SpiderDics[taskEntity.taskid] = SpiderStatue.Start;
             var runtasktype = (CerType)taskEntity.certype;
             object ins = EnumSelecter.Ins_Dic[runtasktype].Invoke();
             var type_ins = ins?.GetType();
-            var gettaskmethod = type_ins.GetMethod("GetTask");
+            //var gettaskmethod = type_ins.GetMethod("GetTask");
             var runtaskmethod = type_ins.GetMethod("RunTask");
             var uploadtaskmethod = type_ins.GetMethod("UploadData");
-            object[] path = { EnumSelecter.GetTaskCerPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, CerFolder), runtasktype) };
+            //object[] path = { EnumSelecter.GetTaskCerPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, CerFolder), runtasktype) };
             object[] path_save = { EnumSelecter.GetOutPutPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, OutFolder), runtasktype) };
-            object[] args = { path };
-            object[] args1 = { default(object[]) };
+            //object[] args = { path };
+            object[] args1 = { taskqueue };
             object[] args2 = { path_save };
+            object[] args3 = { args1 };
             Console.WriteLine($"任务id:{taskEntity.taskid}\t类型{Enum.GetName(typeof(CerType),taskEntity.certype)}开始");
-            gettaskmethod.Invoke(ins, args);
+            //gettaskmethod.Invoke(ins, args);
             Thread[] tds = new Thread[taskEntity.threadnum];
             for(int i = 0;i<taskEntity.threadnum;i++)
             {
-                tds[i] = new Thread(new ThreadStart(delegate { runtaskmethod.Invoke(ins, args1); }));
+                tds[i] = new Thread(new ThreadStart(delegate { runtaskmethod.Invoke(ins, args3); }));
                 tds[i].IsBackground = true;
                 tds[i].Start();
             }
