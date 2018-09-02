@@ -25,7 +25,7 @@ namespace CerSpidersLib
         /// <param name="FilePath">识别库文件所在路径</param>
         /// <param name="Password">识别库调用密码</param>
         /// <returns></returns>
-        [DllImport("WmCode.dll")]
+        [DllImport("CerSpidersLib/bin/Debug/WmCode.dll")]
         public static extern bool LoadWmFromFile(string FilePath, string Password);
 
         [DllImport("WmCode.dll")]
